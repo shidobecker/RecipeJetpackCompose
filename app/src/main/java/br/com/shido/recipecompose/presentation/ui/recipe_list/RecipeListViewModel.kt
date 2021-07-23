@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import br.com.shido.recipecompose.model.Recipe
 import br.com.shido.recipecompose.repository.RecipeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
@@ -26,6 +27,8 @@ constructor(
 
     var categoryScrollPosition: Int = 0
 
+    val loading = mutableStateOf(false)
+
     init {
         newSearch()
     }
@@ -33,10 +36,31 @@ constructor(
 
     fun newSearch() {
         viewModelScope.launch {
+            loading.value = true
+
+            resetSearchState()
+
+            delay(1000)
+
             val result = repository.search(token = token, page = 1, query = query.value)
+
             recipes.value = result
+
+            loading.value = false
         }
     }
+
+    private fun clearSelectedCategory() {
+        selectedCategory.value = null
+    }
+
+    private fun resetSearchState() {
+        recipes.value = emptyList()
+        if (selectedCategory.value?.value != query.value) {
+            clearSelectedCategory()
+        }
+    }
+
 
     fun onQueryChanged(query: String) {
         this.query.value = query

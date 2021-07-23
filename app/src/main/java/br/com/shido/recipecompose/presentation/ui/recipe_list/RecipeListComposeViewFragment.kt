@@ -7,10 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -39,6 +36,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import br.com.shido.recipecompose.HorizontalDottedProgress
 import br.com.shido.recipecompose.R
+import br.com.shido.recipecompose.presentation.components.CircularIndeterminateProgressBar
 import br.com.shido.recipecompose.presentation.components.RecipeCard
 import br.com.shido.recipecompose.presentation.components.SearchAppBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -86,13 +84,22 @@ class RecipeListComposeViewFragment : Fragment() {
                     )
 
 
-                    LazyColumn(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        itemsIndexed(items = recipes) { index, recipe ->
-                            RecipeCard(recipe = recipe, onClick = {})
+                    val loading = viewModel.loading.value
+
+                    Box(modifier = Modifier.fillMaxSize()) { //All it's children will overlay on top of each other, whatever is lower, that thing will be on top on screen
+
+                        LazyColumn(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            itemsIndexed(items = recipes) { index, recipe ->
+                                RecipeCard(recipe = recipe, onClick = {})
+                            }
                         }
+
+                        CircularIndeterminateProgressBar(isDisplayed = loading)
+
                     }
+
 
                 }
             }
