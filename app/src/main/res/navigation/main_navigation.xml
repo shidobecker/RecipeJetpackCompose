@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/main_navigation"
+  app:startDestination="@id/recipeListComposeViewFragment">
+
+  <fragment
+    android:id="@+id/recipeListComposeViewFragment"
+    tools:layout="@layout/frag_recipe_list"
+    android:name="br.com.shido.recipecompose.presentation.ui.recipe_list.RecipeListComposeViewFragment"
+    android:label="RecipeListComposeViewFragment" >
+    <action
+      android:id="@+id/viewRecipe"
+      app:destination="@id/recipeFragment" />
+  </fragment>
+  <fragment
+    android:id="@+id/recipeFragment"
+    android:name="br.com.shido.recipecompose.presentation.ui.recipe.RecipeFragment"
+    android:label="RecipeFragment" />
+</navigation>
