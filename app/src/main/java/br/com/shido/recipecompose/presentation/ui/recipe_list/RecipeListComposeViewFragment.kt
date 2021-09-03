@@ -36,9 +36,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import br.com.shido.recipecompose.HorizontalDottedProgress
 import br.com.shido.recipecompose.R
-import br.com.shido.recipecompose.presentation.components.CircularIndeterminateProgressBar
-import br.com.shido.recipecompose.presentation.components.RecipeCard
-import br.com.shido.recipecompose.presentation.components.SearchAppBar
+import br.com.shido.recipecompose.presentation.components.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -88,13 +86,18 @@ class RecipeListComposeViewFragment : Fragment() {
 
                     Box(modifier = Modifier.fillMaxSize()) { //All it's children will overlay on top of each other, whatever is lower, that thing will be on top on screen
 
-                        LazyColumn(
+                       // PulsingDemo()
+                        HeartAnimated()
+
+
+                   /*     LazyColumn(
                             modifier = Modifier.padding(16.dp)
                         ) {
                             itemsIndexed(items = recipes) { index, recipe ->
                                 RecipeCard(recipe = recipe, onClick = {})
                             }
-                        }
+                        }*/
+
 
                         CircularIndeterminateProgressBar(isDisplayed = loading)
 

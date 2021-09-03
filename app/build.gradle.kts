@@ -11,7 +11,8 @@ dependencies {
     implementation(AndroidX.appCompat)
 
     implementation(AndroidX.appCompat)
-    implementation(Compose.composeAnimation)
+   // implementation(Compose.composeAnimation)
+    //implementation(Compose.composeAnimationCore)
     implementation(Compose.runtime)
     implementation(Compose.runtimeLiveData)
     implementation(Compose.ui)
