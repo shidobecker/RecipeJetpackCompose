@@ -2,9 +2,11 @@ package br.com.shido.recipecompose.presentation.components
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import br.com.shido.recipecompose.presentation.ui.recipe_list.FoodCategory
 import br.com.shido.recipecompose.presentation.ui.recipe_list.getAllFoodCategories
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +22,7 @@ fun CategoriesRow(
     val scrollState = rememberScrollState()
 
     Row(
-        modifier = Modifier.horizontalScroll(state = scrollState)
+        modifier = Modifier.horizontalScroll(state = scrollState).padding(start = 8.dp)
     ) {
 
         getAllFoodCategories().forEach { category ->

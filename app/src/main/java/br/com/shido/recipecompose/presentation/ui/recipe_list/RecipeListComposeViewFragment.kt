@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,11 +37,19 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import br.com.shido.recipecompose.HorizontalDottedProgress
 import br.com.shido.recipecompose.R
-import br.com.shido.recipecompose.presentation.components.*
+import br.com.shido.recipecompose.presentation.BaseApplication
+import br.com.shido.recipecompose.presentation.components.AppTheme
+import br.com.shido.recipecompose.presentation.components.RecipeCard
+import br.com.shido.recipecompose.presentation.components.SearchAppBar
+import br.com.shido.recipecompose.presentation.components.ShimmerRecipeCardItem
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RecipeListComposeViewFragment : Fragment() {
+
+    @Inject
+    lateinit var application: BaseApplication
 
     private val viewModel: RecipeListViewModel by viewModels()
     //val viewModel2: RecipeListViewModel by activityViewModels() -> Shared View Model
@@ -55,59 +64,69 @@ class RecipeListComposeViewFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
 
-                //Everytime viewModel.recipes changes, this changes and any composable using this will recompose
-                val recipes = viewModel.recipes.value
+                AppTheme(darkTheme = application.isDark.value) {
 
-                val queryRemember =
-                    remember { mutableStateOf("beef") }// Remember (url: state in composable) a value computed by remember
-                // is stored in the composition during initial composition, and the stored value is returned during recomposition.
-                // Remember can be used to store both mutable and immutable objects
+                    //Everytime viewModel.recipes changes, this changes and any composable using this will recompose
+                    val recipes = viewModel.recipes.value
 
-                val queryViewModel = viewModel.query.value
+                    val queryRemember =
+                        remember { mutableStateOf("beef") }// Remember (url: state in composable) a value computed by remember
+                    // is stored in the composition during initial composition, and the stored value is returned during recomposition.
+                    // Remember can be used to store both mutable and immutable objects
 
-                val querySavedInstanceState = rememberSaveable { mutableStateOf("init") }
-                //Remember saved holds value for configuration changes
+                    val queryViewModel = viewModel.query.value
 
-
-                Column {
-                    SearchAppBar(
-                        query = queryViewModel,
-                        onQueryChanged = viewModel::onQueryChanged,
-                        onNewSearch = viewModel::newSearch,
-                        scrollPosition = viewModel.categoryScrollPosition,
-                        selectedCategory = viewModel.selectedCategory.value,
-                        onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
-                        onChangedCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition,
-                        scope = lifecycleScope
-                    )
+                    val querySavedInstanceState = rememberSaveable { mutableStateOf("init") }
+                    //Remember saved holds value for configuration changes
 
 
-                    val loading = viewModel.loading.value
+                    Column {
+                        SearchAppBar(
+                            query = queryViewModel,
+                            onQueryChanged = viewModel::onQueryChanged,
+                            onNewSearch = viewModel::newSearch,
+                            scrollPosition = viewModel.categoryScrollPosition,
+                            selectedCategory = viewModel.selectedCategory.value,
+                            onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
+                            onChangedCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition,
+                            scope = lifecycleScope,
+                            onToggleTheme = {
+                                application.toggleLightTheme()
+                            }
+                        )
 
-                    Box(modifier = Modifier.fillMaxSize()) { //All it's children will overlay on top of each other, whatever is lower, that thing will be on top on screen
 
-                        LazyColumn(
-                            modifier = Modifier.padding(16.dp)
-                        ) {
+                        val loading = viewModel.loading.value
 
-                            if(loading) {
-                                items(5){
-                                    ShimmerRecipeCardItem(imageHeight = 200.dp)
-                                }
-                            }else{
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(color = MaterialTheme.colors.background)
+                        ) { //All it's children will overlay on top of each other, whatever is lower, that thing will be on top on screen
 
-                                itemsIndexed(items = recipes) { index, recipe ->
-                                    RecipeCard(recipe = recipe, onClick = {})
+                            LazyColumn(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+
+                                if (loading) {
+                                    items(5) {
+                                        ShimmerRecipeCardItem(imageHeight = 200.dp)
+                                    }
+                                } else {
+
+                                    itemsIndexed(items = recipes) { index, recipe ->
+                                        RecipeCard(recipe = recipe, onClick = {})
+                                    }
                                 }
                             }
+
+
+                            // CircularIndeterminateProgressBar(isDisplayed = loading)
+
                         }
 
 
-                       // CircularIndeterminateProgressBar(isDisplayed = loading)
-
                     }
-
-
                 }
             }
         }
