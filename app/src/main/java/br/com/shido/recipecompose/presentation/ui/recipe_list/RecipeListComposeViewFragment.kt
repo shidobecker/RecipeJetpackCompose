@@ -86,20 +86,24 @@ class RecipeListComposeViewFragment : Fragment() {
 
                     Box(modifier = Modifier.fillMaxSize()) { //All it's children will overlay on top of each other, whatever is lower, that thing will be on top on screen
 
-                       // PulsingDemo()
-                        HeartAnimated()
-
-
-                   /*     LazyColumn(
+                        LazyColumn(
                             modifier = Modifier.padding(16.dp)
                         ) {
-                            itemsIndexed(items = recipes) { index, recipe ->
-                                RecipeCard(recipe = recipe, onClick = {})
+
+                            if(loading) {
+                                items(5){
+                                    ShimmerRecipeCardItem(imageHeight = 200.dp)
+                                }
+                            }else{
+
+                                itemsIndexed(items = recipes) { index, recipe ->
+                                    RecipeCard(recipe = recipe, onClick = {})
+                                }
                             }
-                        }*/
+                        }
 
 
-                        CircularIndeterminateProgressBar(isDisplayed = loading)
+                       // CircularIndeterminateProgressBar(isDisplayed = loading)
 
                     }
 

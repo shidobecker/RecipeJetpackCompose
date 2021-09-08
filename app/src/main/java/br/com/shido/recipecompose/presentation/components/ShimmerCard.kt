@@ -9,10 +9,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Brush.Companion.linearGradient
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+
+@Composable
+fun GradientDemo() {
+    val colors = listOf(Color.Blue, Color.Red, Color.Blue)
+    val brush = linearGradient(
+        colors,
+        start = Offset(200f, 200f),
+        end = Offset(400f, 400f)
+    )
+    Surface(shape = MaterialTheme.shapes.small ){
+        Spacer(modifier = Modifier.fillMaxSize().background(brush = brush))
+    }
+}
 
 @Composable
 fun ShimmerRecipeCardItem(
@@ -51,7 +65,7 @@ fun ShimmerRecipeCardItem(
             animationSpec = shimmerAnimationSpec
         )
 
-        val brush = Brush.linearGradient(
+        val brush = linearGradient(
             colors = colors,
             start = Offset(
                 x = xPosition.value - gradientWidthPx,
@@ -60,12 +74,13 @@ fun ShimmerRecipeCardItem(
             end = Offset(x = xPosition.value, y = yPosition.value)
         )
 
-        Column{
+        Column {
             repeat(5) {
                 drawShimmerCard(
                     imageHeight = imageHeight,
                     padding = padding,
-                    background = brush)
+                    background = brush
+                )
             }
         }
     }
@@ -74,7 +89,7 @@ fun ShimmerRecipeCardItem(
 @Composable
 private fun drawShimmerCard(
     imageHeight: Dp,
-    padding:Dp,
+    padding: Dp,
     background: Brush
 ) {
     Column(modifier = Modifier.padding(padding)) {
