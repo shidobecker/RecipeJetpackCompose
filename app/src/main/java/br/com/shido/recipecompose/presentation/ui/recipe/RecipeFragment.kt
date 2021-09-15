@@ -21,6 +21,15 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class RecipeFragment : Fragment() {
 
+    private var recipeId: Int = -1
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.getInt("recipeId")?.let { recipe ->
+            this.recipeId = recipe
+        }
+    }
+
     @ExperimentalUnitApi
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,7 +40,7 @@ class RecipeFragment : Fragment() {
             setContent {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        "Recipe Fragment", style = TextStyle(
+                        "Selected Recipe id $recipeId", style = TextStyle(
                             fontSize = TextUnit(21f, TextUnitType.Sp)
                         )
                     )

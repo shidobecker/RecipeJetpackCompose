@@ -1,7 +1,5 @@
 package br.com.shido.recipecompose.presentation.components
 
-import android.util.Log
-import android.util.Log.w
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable

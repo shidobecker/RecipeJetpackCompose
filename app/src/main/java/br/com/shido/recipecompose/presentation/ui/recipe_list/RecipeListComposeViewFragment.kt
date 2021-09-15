@@ -6,14 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,13 +40,14 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import br.com.shido.recipecompose.HorizontalDottedProgress
 import br.com.shido.recipecompose.R
 import br.com.shido.recipecompose.presentation.BaseApplication
-import br.com.shido.recipecompose.presentation.components.*
+import br.com.shido.recipecompose.presentation.components.AppTheme
+import br.com.shido.recipecompose.presentation.components.SearchAppBar
 import br.com.shido.recipecompose.utils.SnackbarController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -75,6 +75,7 @@ class RecipeListComposeViewFragment : Fragment() {
         }
     }
 
+    @ExperimentalUnitApi
     @ExperimentalComposeUiApi
     @Composable
     private fun AppThemeCompose() {
@@ -96,6 +97,8 @@ class RecipeListComposeViewFragment : Fragment() {
 
             val loading = viewModel.loading.value
 
+            val page = viewModel.page.value
+
             val scaffoldState = rememberScaffoldState()
 
             Scaffold(
@@ -103,7 +106,9 @@ class RecipeListComposeViewFragment : Fragment() {
                     SearchAppBar(
                         query = queryViewModel,
                         onQueryChanged = viewModel::onQueryChanged,
-                        onNewSearch = viewModel::newSearch,
+                        onNewSearch = {
+                            viewModel.onTriggerEvent(RecipeListEvent.NewSearchEvent)
+                        },
                         scrollPosition = viewModel.categoryScrollPosition,
                         selectedCategory = viewModel.selectedCategory.value,
                         onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
@@ -136,41 +141,16 @@ class RecipeListComposeViewFragment : Fragment() {
                 }
             ) {
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(color = MaterialTheme.colors.background)
-                ) { //All it's children will overlay on top of each other, whatever is lower, that thing will be on top on screen
-
-                    LazyColumn(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-
-
-                        if (loading) {
-                            items(5) {
-                                ShimmerRecipeCardItem(imageHeight = 200.dp)
-                            }
-                        } else {
-                            itemsIndexed(items = recipes) { index, recipe ->
-                                RecipeCard(recipe = recipe, onClick = {})
-                            }
-                        }
-                    }
-
-
-                    // CircularIndeterminateProgressBar(isDisplayed = loading)
-
-                    DefaultSnackbar(
-                        snackbarHostState = scaffoldState.snackbarHostState,
-                        modifier = Modifier.align(
-                            Alignment.BottomCenter
-                        )
-                    ) {
-                        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
-                    }
-
-                }
+                RecipeList(
+                    loading = loading,
+                    recipes = viewModel.recipes.value,
+                    onChangeRecipeScrollPosition = { viewModel.onChangeRecipeScrollPosition(it) },
+                    page = page,
+                    onTriggerEvent = { viewModel.onTriggerEvent(RecipeListEvent.NextPageEvent) },
+                    scaffoldState = scaffoldState,
+                    snackbarController = snackbarController,
+                    navController = findNavController()
+                )
             }
         }
     }
